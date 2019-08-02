@@ -35,4 +35,7 @@ jobs:
                 command: zip -r lambdasendmail.zip index.js package.json
             - run:
                 name: Amazon Lambda
-                command: aws s3 cp --recursive lambdasendmail.zip s3://${CODE_DEPLOY_S3_BUCKET}
+                command: | 
+                  pwd
+                  ls -al
+                  aws s3 cp lambdasendmail.zip s3://${CODE_DEPLOY_S3_BUCKET}
