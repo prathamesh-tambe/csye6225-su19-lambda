@@ -35,4 +35,4 @@ jobs:
                 command: zip -r lambdasendmail.zip index.js package.json
             - run:
                 name: Amazon Lambda
-                command: aws --region us-east-1 lambda update-function-code --function-name passwordResetService --zip-file fileb://lambdasendmail.zip
+                command: aws s3 cp --recursive lambdasendmail s3://${CODE_DEPLOY_S3_BUCKET}
