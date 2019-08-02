@@ -1,0 +1,34 @@
+version: 2
+jobs:
+    build:
+        docker:
+          - image: circleci/node:7.10
+        working_directory: ~/repo/myLambda
+
+        steps:
+            - checkout
+             # Download and cache dependencies
+            - restore_cache:
+                keys:
+                  - v1-dependencies-{{ checksum "package.json" }}
+                  # fallback to using the latest cache if no exact match is found
+                  - v1-dependencies-
+
+            - run: yarn install
+
+            - save_cache:
+                paths:
+                  - node_modules
+                key: v1-dependencies-{{ checksum "package.json" }}
+            - run:
+                name: Install packages
+                command: sudo apt-get install wget zip unzip && sudo apt-get install python-dev && sudo apt-get install python-pip -y
+            - run:
+                name: Install awscli
+                command: sudo pip install awscli
+            - run:
+                name: zip project
+                command: zip -r lambdasendmail.zip index.js package.json
+            - run:
+                name: Amazon Lambda
+                command: aws --region us-east-1 lambda update-function-code --function-name passwordResetService --zip-file fileb://lambdasendmail.zip
