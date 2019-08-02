@@ -15,6 +15,8 @@ exports.handler = (event, context) => {
         }
     };
 
+    console.log("ascascascasc",getItemObject);
+
     dynamoDB.getItem(getItemObject, (err, data) => {
         if (data.Item === undefined || data.Item.ttl.N < Math.floor(Date.now() / 1000)) {
             const putItemObject = {
