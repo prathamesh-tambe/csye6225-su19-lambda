@@ -1,0 +1,41 @@
+version: 2
+jobs:
+    build:
+        docker:
+          - image: circleci/node:7.10
+        working_directory: ~/repo/myLambda
+
+        steps:
+            - checkout
+             # Download and cache dependencies
+            - restore_cache:
+                keys:
+                  - v1-dependencies-{{ checksum "package.json" }}
+                  # fallback to using the latest cache if no exact match is found
+                  - v1-dependencies-
+
+            - run: yarn install
+
+            - save_cache:
+                paths:
+                  - node_modules
+                key: v1-dependencies-{{ checksum "package.json" }}
+            - run:
+                name: Install packages
+                command: sudo apt-get install wget zip unzip && sudo apt-get install python-dev && sudo apt-get install python-pip -y
+            - run:
+                name: Install awscli
+                command: |
+                  sudo pip install awscli
+                  aws configure set default.region us-east-1
+                  aws configure set aws_access_key_id ${AWS_ACCESS_KEY}
+                  aws configure set aws_secret_access_key ${AWS_SECRET_KEY}
+            - run:
+                name: zip project
+                command: zip -r lambdasendmail.zip index.js package.json
+            - run:
+                name: Amazon Lambda
+                command: | 
+                  pwd
+                  ls -al
+                  aws s3 cp lambdasendmail.zip s3://${CODE_DEPLOY_S3_BUCKET}
