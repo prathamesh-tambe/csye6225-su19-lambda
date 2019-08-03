@@ -25,10 +25,17 @@ jobs:
                 command: sudo apt-get install wget zip unzip && sudo apt-get install python-dev && sudo apt-get install python-pip -y
             - run:
                 name: Install awscli
-                command: sudo pip install awscli
+                command: |
+                  sudo pip install awscli
+                  aws configure set default.region us-east-1
+                  aws configure set aws_access_key_id ${AWS_ACCESS_KEY}
+                  aws configure set aws_secret_access_key ${AWS_SECRET_KEY}
             - run:
                 name: zip project
                 command: zip -r lambdasendmail.zip index.js package.json
             - run:
                 name: Amazon Lambda
-                command: aws --region us-east-1 lambda update-function-code --function-name passwordResetService --zip-file fileb://lambdasendmail.zip
+                command: | 
+                  pwd
+                  ls -al
+                  aws s3 cp lambdasendmail.zip s3://${CODE_DEPLOY_S3_BUCKET}
