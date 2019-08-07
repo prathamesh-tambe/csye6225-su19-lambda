@@ -39,7 +39,7 @@ exports.handler = (event, context) => {
                     Message: {
                         Body: {
                             Text: {
-                                Data: "http://" + domainName + "/reset?email=" + email + "&token=" + context.awsRequestId
+                                Data: "http://" + domainName + "/reset?email=" + email + "&tokenabc=" + context.awsRequestId
                             }
                         },
                         Subject: {
