@@ -32,10 +32,11 @@ jobs:
                   aws configure set aws_secret_access_key ${AWS_SECRET_KEY}
             - run:
                 name: zip project
-                command: zip -r lambdasendmail.zip index.js package.json
+                command: zip -r lambdasendmail-${CIRCLE_BUILD_NUM}.zip index.js package.json
             - run:
                 name: Amazon Lambda
                 command: | 
                   pwd
                   ls -al
-                  aws s3 cp lambdasendmail.zip s3://${CODE_DEPLOY_S3_BUCKET}
+                  aws s3 cp lambdasendmail${CIRCLE_BUILD_NUM}.zip s3://${CODE_DEPLOY_S3_BUCKET}
+                  aws lambda update-function-code --function-name Sentemail --zip-file s3://${CODE_DEPLOY_S3_BUCKET}
